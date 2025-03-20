@@ -1,9 +1,9 @@
-// home_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_project_iti/api/api_service.dart';
-// import 'package:flutter_project_iti/constant/colors.dart';
+import 'package:flutter_project_iti/constant/colors.dart';
 import 'package:flutter_project_iti/models/recipe.dart';
-import 'package:flutter_project_iti/presentation/recipe_details.dart';
+import 'package:flutter_project_iti/presentation/recipe_details_screen.dart';
+import 'package:flutter_project_iti/presentation/widgets/recipe_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,8 +18,6 @@ class _HomePageState extends State<HomePage> {
   bool _isLoading = false;
   String _selectedMealType = 'All';
 
-  // If your second link is empty, we’ll fetch all recipes once
-  // and filter them locally by mealType:
   List<Recipe> _allRecipes = [];
 
   final List<String> _mealTypes = [
@@ -42,7 +40,7 @@ class _HomePageState extends State<HomePage> {
     try {
       final result = await _apiService.fetchAllRecipes();
       _allRecipes = result;
-      _recipes = result; // show all by default
+      _recipes = result;
     } catch (e) {
       debugPrint('Error fetching recipes: $e');
     } finally {
@@ -53,11 +51,9 @@ class _HomePageState extends State<HomePage> {
   void _filterByMealType(String mealType) {
     setState(() {
       _selectedMealType = mealType;
-
       if (mealType == 'All') {
         _recipes = _allRecipes;
       } else {
-        // Filter locally based on each recipe’s mealType array
         _recipes = _allRecipes
             .where((r) => r.mealType
                 .map((m) => m.toLowerCase())
@@ -71,18 +67,23 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Image.asset('assets/Vector (1).png'),
-        actions: [Image.asset('assets/Icon-Header.png')],
+        leading: Image.asset('assets/back.png'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Image.asset('assets/actions.png'),
+          ),
+        ],
         centerTitle: true,
         title: Text(
           _selectedMealType,
-          style: TextStyle(color: Colors.pinkAccent),
+          style: TextStyle(color: MyColors.pink),
         ),
         backgroundColor: Colors.white,
       ),
       body: Column(
         children: [
-          // Horizontal meal-type tabs
+          // Horizontal filter buttons
           SizedBox(
             height: 50,
             child: ListView.builder(
@@ -99,13 +100,13 @@ class _HomePageState extends State<HomePage> {
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
-                      color: isSelected ? Colors.pinkAccent : Colors.grey[300],
+                      color: isSelected ? MyColors.pink : Colors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       type,
                       style: TextStyle(
-                        color: isSelected ? Colors.white : Colors.black,
+                        color: isSelected ? Colors.white : MyColors.pink,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -114,6 +115,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
           ),
+          // Recipes grid
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
@@ -141,61 +143,45 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               );
                             },
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: ClipRRect(
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(12),
-                                        topRight: Radius.circular(12),
-                                      ),
-                                      child: recipe.image.isNotEmpty
-                                          ? Image.network(
-                                              recipe.image,
-                                              fit: BoxFit.cover,
-                                              width: double.infinity,
-                                            )
-                                          : Container(
-                                              color: Colors.grey[200],
-                                              child: const Icon(Icons.fastfood),
-                                            ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      recipe.name,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0),
-                                    child: Text(
-                                      recipe.mealType.join(", "),
-                                      style: const TextStyle(fontSize: 12),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                ],
-                              ),
-                            ),
+                            child: RecipeCard(recipe:recipe)
                           );
                         },
                       ),
           ),
         ],
+      ),
+      bottomNavigationBar: Container(
+        height: 60,
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: MyColors.pink,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.home_outlined, color: Colors.white),
+              onPressed: () {
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.chat_bubble_outline, color: Colors.white),
+              onPressed: () {
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.layers_outlined, color: Colors.white),
+              onPressed: () {
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.person_outline, color: Colors.white),
+              onPressed: () {
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

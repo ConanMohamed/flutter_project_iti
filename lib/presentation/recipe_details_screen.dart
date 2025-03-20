@@ -1,5 +1,5 @@
-// recipe_detail_page.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_project_iti/constant/colors.dart';
 import 'package:flutter_project_iti/helpers/dp_helper.dart';
 import 'package:flutter_project_iti/models/recipe.dart';
 
@@ -41,11 +41,22 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
     final recipe = widget.recipe;
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Image.asset('assets/back.png'),
+          color: MyColors.pink,
+        ),
         title: Text(recipe.name),
-        backgroundColor: Colors.pinkAccent,
+        centerTitle: true,
+        backgroundColor: Colors.white,
         actions: [
           IconButton(
-            icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+            icon: Image.asset(
+              'assets/love.png',
+              color: isFavorite ? MyColors.pink : Colors.blueGrey,
+            ),
             onPressed: _toggleFavorite,
           )
         ],
@@ -53,7 +64,6 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Recipe image
             if (recipe.image.isNotEmpty)
               Image.network(
                 recipe.image,
@@ -69,7 +79,6 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                 child: const Icon(Icons.fastfood, size: 50),
               ),
             const SizedBox(height: 16),
-            // Basic info
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
@@ -77,33 +86,35 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: Colors.pinkAccent,
+                  color: MyColors.pink,
                 ),
               ),
             ),
-            Text('Cuisine: ${recipe.cuisine} | Difficulty: ${recipe.difficulty}'),
+            Text(
+                'Cuisine: ${recipe.cuisine} | Difficulty: ${recipe.difficulty}'),
             const SizedBox(height: 8),
             Text('Rating: ${recipe.rating} (${recipe.reviewCount} reviews)'),
             const Divider(thickness: 1, height: 24),
-            // Ingredients
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Ingredients',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: MyColors.pink),
                 ),
               ),
             ),
             for (final ing in recipe.ingredients)
               ListTile(
-                leading: const Icon(Icons.check),
+                leading: const Text(
+                  '.',
+                  style: TextStyle(color: MyColors.pink, fontSize: 35),
+                ),
                 title: Text(ing),
               ),
-            // Instructions
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              padding: EdgeInsets.only(right: 16.0),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -115,7 +126,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
             for (int i = 0; i < recipe.instructions.length; i++)
               ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: Colors.pinkAccent,
+                  backgroundColor: MyColors.pink,
                   child: Text('${i + 1}'),
                 ),
                 title: Text(recipe.instructions[i]),
